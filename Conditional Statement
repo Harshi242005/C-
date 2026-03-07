@@ -1,0 +1,22 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    // Array storing English words for 1-9. 
+    // Index 0 is empty so that index 1 matches "one", 2 matches "two", etc.
+    string words[] = {"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+
+    if (n >= 1 && n <= 9) {
+        cout << words[n] << endl;
+    } else {
+        cout << "Greater than 9" << endl;
+    }
+
+    return 0;
+}
