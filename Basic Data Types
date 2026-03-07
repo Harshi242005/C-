@@ -1,0 +1,23 @@
+#include <iostream>
+#include <cstdio>
+using namespace std;
+
+int main() {
+    int i;
+    long l;
+    char ch;
+    float f;
+    double d;
+
+    // Read the space-separated values
+    scanf("%d %ld %c %f %lf", &i, &l, &ch, &f, &d);
+
+    // Print each value on a new line with specified precision
+    printf("%d\n", i);
+    printf("%ld\n", l);
+    printf("%c\n", ch);
+    printf("%.3f\n", f);
+    printf("%.9lf\n", d);
+
+    return 0;
+}
