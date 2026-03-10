@@ -1,0 +1,51 @@
+#include <iostream>
+#include <string>
+#include <exception>
+using namespace std;
+
+/* Define the exception class here */
+class BadLengthException : public exception {
+    private:
+        int n;
+        string msg;
+    public:
+        // Constructor stores the length
+        BadLengthException(int len) : n(len) {
+            msg = to_string(n);
+        }
+        
+        // Override what() to return the length as a string
+        // The locked stub will print "Too short: " followed by this return value
+        const char* what() const throw() {
+            return msg.c_str();
+        }
+};
+
+// This part is usually provided in the locked editor
+bool checkUsername(string username) {
+    bool isValid = true;
+    int n = username.length();
+    if(n < 5) {
+        throw BadLengthException(n); // Your custom exception is thrown here
+    }
+    for(int i = 0; i < n; i++) {
+        if(username[i] == 'w') isValid = false;
+    }
+    return isValid;
+}
+
+int main() {
+    int T; cin >> T;
+    while(T--) {
+        string username;
+        cin >> username;
+        try {
+            bool isValid = checkUsername(username);
+            if(isValid) cout << "Valid" << endl;
+            else cout << "Invalid" << endl;
+        } catch (BadLengthException e) {
+            cout << "Too short: " << e.what() << endl;
+        }
+    }
+    return 0;
+}
