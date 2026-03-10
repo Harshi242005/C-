@@ -1,0 +1,18 @@
+try {
+    /* The locked stub likely calls: 
+       long long result = Server::compute(A, B); 
+       cout << result << endl; */
+    cout << Server::compute(A, B) << endl;
+} 
+catch (const std::bad_alloc& e) {
+    // Specifically catches memory allocation failures
+    cout << "Not enough memory" << endl;
+} 
+catch (const std::exception& e) {
+    // Catches any other standard C++ exceptions (e.g., std::invalid_argument)
+    cout << "Exception: " << e.what() << endl;
+} 
+catch (...) {
+    // Catches non-standard exceptions (anything not derived from std::exception)
+    cout << "Other Exception" << endl;
+}
