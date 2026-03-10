@@ -1,0 +1,67 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <map>
+
+using namespace std;
+
+int main() {
+    int n, q;
+    cin >> n >> q;
+    cin.ignore(); // Clear the newline after n and q
+
+    map<string, string> attributeMap;
+    vector<string> tagStack;
+
+    for (int i = 0; i < n; ++i) {
+        string line;
+        getline(cin, line);
+        
+        // Remove brackets to make parsing easier
+        if (line[1] == '/') {
+            // Closing tag: </tag1>
+            tagStack.pop_back();
+        } else {
+            // Opening tag: <tag1 attr = "val">
+            // Remove '<' and '>'
+            line = line.substr(1, line.find('>') - 1);
+            stringstream ss(line);
+            string tagName;
+            ss >> tagName;
+
+            // Build the current hierarchy path (e.g., tag1.tag2)
+            string currentPath = "";
+            if (!tagStack.empty()) {
+                currentPath = tagStack.back() + "." + tagName;
+            } else {
+                currentPath = tagName;
+            }
+            tagStack.push_back(currentPath);
+
+            // Parse attributes
+            string attrName, eq, attrVal;
+            while (ss >> attrName >> eq >> attrVal) {
+                // Remove quotes from "value" and potential '>' if present
+                if (attrVal.back() == '>') attrVal.pop_back();
+                attrVal = attrVal.substr(1, attrVal.size() - 2);
+                
+                // Store in map as path~attribute
+                attributeMap[currentPath + "~" + attrName] = attrVal;
+            }
+        }
+    }
+
+    // Process Queries
+    for (int i = 0; i < q; ++i) {
+        string query;
+        getline(cin, query);
+        if (attributeMap.count(query)) {
+            cout << attributeMap[query] << endl;
+        } else {
+            cout << "Not Found!" << endl;
+        }
+    }
+
+    return 0;
+}
