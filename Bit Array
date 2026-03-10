@@ -1,0 +1,38 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// 2^31 bits / 32 bits per unsigned int = 2^26 unsigned ints
+// 2^26 = 67,108,864
+unsigned int bitset_array[67108864];
+
+int main() {
+    unsigned int N, S, P, Q;
+    if (!(cin >> N >> S >> P >> Q)) return 0;
+
+    unsigned int mod = 1u << 31;
+    unsigned int current = S % mod;
+    unsigned int count = 0;
+
+    for (unsigned int i = 0; i < N; ++i) {
+        // Find the index in the array and the specific bit
+        unsigned int index = current / 32;
+        unsigned int bit = 1u << (current % 32);
+
+        // If bit is not set, it's a new distinct number
+        if (!(bitset_array[index] & bit)) {
+            bitset_array[index] |= bit;
+            count++;
+        } else {
+            // Sequence has entered a cycle; no more new distinct numbers will appear
+            break;
+        }
+
+        // Generate next number in sequence
+        current = (1ULL * current * P + Q) % mod;
+    }
+
+    cout << count << endl;
+    return 0;
+}
