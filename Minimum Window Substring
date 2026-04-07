@@ -1,0 +1,35 @@
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        if (s.empty() || t.empty()) return "";
+
+        vector<int> target(128, 0);
+        for (char c : t) target[c]++;
+
+        int left = 0, right = 0, minLen = INT_MAX, start = 0;
+        int required = t.length();
+        int count = 0; // characters from t currently in window
+
+        while (right < s.length()) {
+            // If current char is needed, increment our match count
+            if (target[s[right]] > 0) count++;
+            target[s[right]]--; // decrease frequency in map
+            right++;
+
+            // When window is valid, try to shrink from the left
+            while (count == required) {
+                if (right - left < minLen) {
+                    minLen = right - left;
+                    start = left;
+                }
+
+                target[s[left]]++;
+                // If the char we just removed was a required one
+                if (target[s[left]] > 0) count--;
+                left++;
+            }
+        }
+
+        return minLen == INT_MAX ? "" : s.substr(start, minLen);
+    }
+};
