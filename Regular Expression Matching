@@ -1,0 +1,35 @@
+class Solution {
+public:
+    // Memoization table: -1 = unvisited, 0 = false, 1 = true
+    int memo[21][21];
+
+    bool isMatch(string s, string p) {
+        memset(memo, -1, sizeof(memo));
+        return dp(0, 0, s, p);
+    }
+
+    bool dp(int i, int j, string& s, string& p) {
+        if (memo[i][j] != -1) return memo[i][j];
+        
+        bool result;
+        // Base case: If we reached the end of the pattern
+        if (j == p.length()) {
+            result = (i == s.length());
+        } else {
+            // Check if the current characters match
+            bool first_match = (i < s.length() && (p[j] == s[i] || p[j] == '.'));
+
+            // Handle '*' wildcard
+            if (j + 1 < p.length() && p[j + 1] == '*') {
+                // Choice 1: Skip '*' and its preceding element (zero matches)
+                // Choice 2: Use '*' (if first_match is true, move s pointer)
+                result = dp(i, j + 2, s, p) || (first_match && dp(i + 1, j, s, p));
+            } else {
+                // No '*', just move both pointers if they match
+                result = first_match && dp(i + 1, j + 1, s, p);
+            }
+        }
+
+        return memo[i][j] = result;
+    }
+};
