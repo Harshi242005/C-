@@ -1,0 +1,40 @@
+class Solution {
+public:
+    int totalNQueens(int n) {
+        int count = 0;
+        // Trackers for occupied columns and both diagonals
+        vector<bool> cols(n, false);
+        vector<bool> diag1(2 * n, false); // row + col
+        vector<bool> diag2(2 * n, false); // row - col + n
+
+        backtrack(0, n, count, cols, diag1, diag2);
+        return count;
+    }
+
+private:
+    void backtrack(int row, int n, int& count, 
+                   vector<bool>& cols, vector<bool>& diag1, vector<bool>& diag2) {
+        // Base case: All queens placed
+        if (row == n) {
+            count++;
+            return;
+        }
+
+        for (int col = 0; col < n; col++) {
+            int d1 = row + col;
+            int d2 = row - col + n;
+
+            // Check if placing a queen here is safe
+            if (!cols[col] && !diag1[d1] && !diag2[d2]) {
+                // Place queen (mark as occupied)
+                cols[col] = diag1[d1] = diag2[d2] = true;
+
+                // Move to the next row
+                backtrack(row + 1, n, count, cols, diag1, diag2);
+
+                // Backtrack (unmark)
+                cols[col] = diag1[d1] = diag2[d2] = false;
+            }
+        }
+    }
+};
