@@ -1,0 +1,36 @@
+class Solution {
+public:
+    // Custom comparator for the priority queue to keep it a Min-Heap
+    struct compare {
+        bool operator()(ListNode* a, ListNode* b) {
+            return a->val > b->val;
+        }
+    };
+
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*, vector<ListNode*>, compare> minHeap;
+
+        // Step 1: Push the head of each non-empty list into the heap
+        for (auto list : lists) {
+            if (list) minHeap.push(list);
+        }
+
+        ListNode* dummy = new ListNode(0);
+        ListNode* tail = dummy;
+
+        // Step 2: Extract the smallest node and push its next node into the heap
+        while (!minHeap.empty()) {
+            ListNode* top = minHeap.top();
+            minHeap.pop();
+
+            tail->next = top;
+            tail = tail->next;
+
+            if (top->next) {
+                minHeap.push(top->next);
+            }
+        }
+
+        return dummy->next;
+    }
+};
