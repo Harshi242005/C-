@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int countDigitOne(int n) {
+        long long count = 0;
+        // i represents the place value: 1, 10, 100, 1000...
+        for (long long i = 1; i <= n; i *= 10) {
+            long long divider = i * 10;
+            
+            // Example: n = 1234, i = 100
+            // prefix = 12, curr = 2, suffix = 34
+            long long prefix = n / divider;
+            long long curr = (n / i) % 10;
+            long long suffix = n % i;
+            
+            if (curr == 0) {
+                count += prefix * i;
+            } else if (curr == 1) {
+                count += prefix * i + (suffix + 1);
+            } else {
+                count += (prefix + 1) * i;
+            }
+        }
+        return (int)count;
+    }
+};
