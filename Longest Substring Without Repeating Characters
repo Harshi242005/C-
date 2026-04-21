@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        // Frequency array/Map to store the last seen index of characters
+        // Using 256 to cover all ASCII characters (letters, digits, symbols, spaces)
+        vector<int> lastIndex(256, -1);
+        
+        int maxLength = 0;
+        int left = 0;
+        
+        for (int right = 0; right < s.length(); right++) {
+            // If the character was seen before AND is within the current window
+            if (lastIndex[s[right]] >= left) {
+                left = lastIndex[s[right]] + 1;
+            }
+            
+            // Update the last seen position of the character
+            lastIndex[s[right]] = right;
+            
+            // Calculate window size and update max
+            maxLength = max(maxLength, right - left + 1);
+        }
+        
+        return maxLength;
+    }
+};
