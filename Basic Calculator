@@ -1,0 +1,38 @@
+class Solution {
+public:
+    int calculate(string s) {
+        stack<int> st;
+        int res = 0;
+        int sign = 1;
+        long n = s.length();
+
+        for (int i = 0; i < n; i++) {
+            if (isdigit(s[i])) {
+                long val = 0;
+                while (i < n && isdigit(s[i])) {
+                    val = val * 10 + (s[i] - '0');
+                    i++;
+                }
+                res += val * sign;
+                i--; // Step back because the for-loop increments i
+            } 
+            else if (s[i] == '+') {
+                sign = 1;
+            } 
+            else if (s[i] == '-') {
+                sign = -1;
+            } 
+            else if (s[i] == '(') {
+                st.push(res);
+                st.push(sign);
+                res = 0;   // Reset for sub-expression
+                sign = 1;
+            } 
+            else if (s[i] == ')') {
+                res *= st.top(); st.pop(); // Pop sign
+                res += st.top(); st.pop(); // Pop previous result
+            }
+        }
+        return res;
+    }
+};
