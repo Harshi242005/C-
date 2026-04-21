@@ -1,0 +1,26 @@
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int indexDiff, int valueDiff) {
+        set<long> window; // Use long to prevent overflow during subtraction
+        
+        for (int i = 0; i < nums.size(); i++) {
+            // 1. Maintain sliding window size
+            if (i > indexDiff) {
+                window.erase((long)nums[i - indexDiff - 1]);
+            }
+            
+            // 2. Find the first element >= nums[i] - valueDiff
+            auto it = window.lower_bound((long)nums[i] - valueDiff);
+            
+            // 3. Check if that element is also <= nums[i] + valueDiff
+            if (it != window.end() && *it <= (long)nums[i] + valueDiff) {
+                return true;
+            }
+            
+            // 4. Add current element to window
+            window.insert((long)nums[i]);
+        }
+        
+        return false;
+    }
+};
