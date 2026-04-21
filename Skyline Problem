@@ -1,0 +1,37 @@
+class Solution {
+public:
+    vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+        vector<pair<int, int>> events;
+        for (auto& b : buildings) {
+            // Use negative height for start points to sort them correctly
+            events.push_back({b[0], -b[2]}); 
+            events.push_back({b[1], b[2]});
+        }
+        
+        // Sort by x, then by height
+        sort(events.begin(), events.end());
+        
+        vector<vector<int>> result;
+        multiset<int> heights = {0}; // Stores active building heights
+        int prev_max = 0;
+        
+        for (auto& e : events) {
+            int x = e.first;
+            int h = e.second;
+            
+            if (h < 0) {
+                heights.insert(-h); // Start of a building
+            } else {
+                heights.erase(heights.find(h)); // End of a building
+            }
+            
+            int current_max = *heights.rbegin();
+            if (current_max != prev_max) {
+                result.push_back({x, current_max});
+                prev_max = current_max;
+            }
+        }
+        
+        return result;
+    }
+};
