@@ -1,0 +1,23 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Define the struct here
+struct Student {
+    int age;
+    string first_name;
+    string last_name;
+    int standard;
+};
+
+int main() {
+    Student st;
+    
+    // Input handled by HackerRank logic
+    cin >> st.age >> st.first_name >> st.last_name >> st.standard;
+    
+    // Output the fields separated by spaces
+    cout << st.age << " " << st.first_name << " " << st.last_name << " " << st.standard;
+    
+    return 0;
+}
