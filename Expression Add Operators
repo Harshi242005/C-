@@ -1,0 +1,37 @@
+class Solution {
+public:
+    vector<string> result;
+    
+    void backtrack(string& num, int target, int index, long currentVal, long prevVal, string path) {
+        if (index == num.length()) {
+            if (currentVal == target) result.push_back(path);
+            return;
+        }
+
+        for (int i = index; i < num.length(); i++) {
+            // Handle leading zeros: "05" is invalid, but "0" is fine.
+            if (i > index && num[index] == '0') break;
+
+            string part = num.substr(index, i - index + 1);
+            long val = stol(part);
+
+            if (index == 0) {
+                // First number, no operator needed
+                backtrack(num, target, i + 1, val, val, part);
+            } else {
+                // Try all three operators
+                backtrack(num, target, i + 1, currentVal + val, val, path + "+" + part);
+                backtrack(num, target, i + 1, currentVal - val, -val, path + "-" + part);
+                // The multiplication trick: undo the last change and apply the product
+                backtrack(num, target, i + 1, currentVal - prevVal + (prevVal * val), prevVal * val, path + "*" + part);
+            }
+        }
+    }
+
+    vector<string> addOperators(string num, int target) {
+        result.clear();
+        if (num.empty()) return result;
+        backtrack(num, target, 0, 0, 0, "");
+        return result;
+    }
+};
