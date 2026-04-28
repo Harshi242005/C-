@@ -1,0 +1,36 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// 2^31 bits / 32 bits per unsigned int = 2^26
+unsigned int bitset_array[67108864]; 
+
+void set_bit(unsigned int n) {
+    bitset_array[n >> 5] |= (1 << (n & 31));
+}
+
+bool get_bit(unsigned int n) {
+    return bitset_array[n >> 5] & (1 << (n & 31));
+}
+
+int main() {
+    unsigned int N, S, P, Q;
+    cin >> N >> S >> P >> Q;
+
+    unsigned long long mod = 1ULL << 31;
+    unsigned int current = S % mod;
+    unsigned int count = 0;
+
+    for (unsigned int i = 0; i < N; i++) {
+        if (!get_bit(current)) {
+            set_bit(current);
+            count++;
+        }
+        // Generate next number using 1ULL to prevent overflow during multiplication
+        current = (1ULL * current * P + Q) % mod;
+    }
+
+    cout << count << endl;
+    return 0;
+}
