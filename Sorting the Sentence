@@ -1,0 +1,31 @@
+class Solution {
+public:
+    string sortSentence(string s) {
+        string word = "";
+        vector<string> strStore(10, "");
+
+        // store the word in right place with extra space in end
+        for (int i = 0; i < s.length(); i++) {
+            if (s[i] != ' ') {
+                if (isdigit(s[i])) {
+                    strStore[s[i] - '0' - 1] = word + " ";
+                    word = "";
+                } else {
+                    word += s[i];
+                }
+            }
+        }
+    
+        // make complete sentence
+        string ans = "";
+        for(int i=0; i<strStore.size(); i++){
+            ans += strStore[i];
+        }
+
+        // remove extra space from the end
+        ans.pop_back();
+
+        // final sentence
+        return ans;
+    }
+};
