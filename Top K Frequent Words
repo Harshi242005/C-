@@ -1,0 +1,52 @@
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    // Custom comparator for the Min-Heap
+    struct Comparator {
+        bool operator()(pair<int, string>& a, pair<int, string>& b) {
+            if (a.first == b.first) {
+                // If frequencies are equal, we want the lexicographically 
+                // LARGER word at the top so it gets popped first.
+                return a.second < b.second;
+            }
+            // Otherwise, we want the LOWER frequency at the top (Min-Heap).
+            return a.first > b.first;
+        }
+    };
+
+    vector<string> topKFrequent(vector<string>& words, int k) {
+        // 1. Count frequencies
+        unordered_map<string, int> counts;
+        for (const string& w : words) {
+            counts[w]++;
+        }
+
+        // 2. Use a priority queue (Min-Heap) to keep track of top K
+        priority_queue<pair<int, string>, vector<pair<int, string>>, Comparator> minHeap;
+
+        for (auto const& [word, freq] : counts) {
+            minHeap.push({freq, word});
+            if (minHeap.size() > k) {
+                minHeap.pop();
+            }
+        }
+
+        // 3. Extract words and reverse them
+        // (Since it's a min-heap, the "smallest" of the top K comes out first)
+        vector<string> result;
+        while (!minHeap.empty()) {
+            result.push_back(minHeap.top().second);
+            minHeap.pop();
+        }
+        
+        reverse(result.begin(), result.end());
+        return result;
+    }
+};
