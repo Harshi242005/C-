@@ -1,0 +1,40 @@
+#include <string>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+class Solution {
+public:
+    string removeDuplicateLetters(string s) {
+        vector<int> lastIndex(26, 0);
+        vector<bool> visited(26, false);
+        string result = "";
+
+        // 1. Record the last occurrence of each character
+        for (int i = 0; i < s.length(); i++) {
+            lastIndex[s[i] - 'a'] = i;
+        }
+
+        for (int i = 0; i < s.length(); i++) {
+            int curr = s[i] - 'a';
+
+            // 2. Skip if the character is already in our result
+            if (visited[curr]) continue;
+
+            // 3. Monotonic Stack Logic:
+            // While the current char is smaller than the last char in result
+            // AND the last char in result appears again later...
+            while (!result.empty() && s[i] < result.back() && lastIndex[result.back() - 'a'] > i) {
+                visited[result.back() - 'a'] = false;
+                result.pop_back();
+            }
+
+            // 4. Add current char and mark as visited
+            result += s[i];
+            visited[curr] = true;
+        }
+
+        return result;
+    }
+};
