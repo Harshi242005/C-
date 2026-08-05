@@ -1,0 +1,63 @@
+class Solution {
+public:
+    bool splitArraySameAverage(vector<int>& nums) {
+        int n = nums.size();
+        int totalSum = accumulate(nums.begin(), nums.end(), 0);
+        
+        int leftSize = n / 2;
+        int rightSize = n - leftSize;
+        
+        // mp[i] stores all possible sums of subsets of size i from the left half
+        vector<unordered_set<int>> leftSubsets(leftSize + 1);
+        
+        // Step 1: Generate all subsets for the left half
+        for (int mask = 0; mask < (1 << leftSize); mask++) {
+            int currentSum = 0;
+            int currentLength = 0;
+            for (int i = 0; i < leftSize; i++) {
+                if (mask & (1 << i)) {
+                    currentSum += nums[i];
+                    currentLength++;
+                }
+            }
+            leftSubsets[currentLength].insert(currentSum);
+        }
+        
+        // Step 2: Generate all subsets for the right half and match on the fly
+        for (int mask = 0; mask < (1 << rightSize); mask++) {
+            int sumR = 0;
+            int lenR = 0;
+            for (int i = 0; i < rightSize; i++) {
+                if (mask & (1 << i)) {
+                    sumR += nums[i + leftSize];
+                    lenR++;
+                }
+            }
+            
+            // Try matching with every possible left subset size
+            for (int lenL = 0; lenL <= min(leftSize, n - lenR); lenL++) {
+                int totalSubsetSize = lenL + lenR;
+                
+                // Discard trivial splits: subsets must be non-empty and cannot contain the entire array
+                if (totalSubsetSize == 0 || totalSubsetSize == n) {
+                    continue;
+                }
+                
+                // Optimization: (totalSum * size) must be perfectly divisible by n
+                if ((totalSum * totalSubsetSize) % n != 0) {
+                    continue;
+                }
+                
+                // Target sum needed from the left half to satisfy the average equation
+                int targetSumL = (totalSum * totalSubsetSize / n) - sumR;
+                
+                // If we found a subset in the left half with the exact required sum, return true
+                if (leftSubsets[lenL].count(targetSumL)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+};
