@@ -1,0 +1,64 @@
+#include <unordered_map>
+#include <vector>
+
+class FreqStack {
+private:
+    // Tracks the current global maximum frequency
+    int maxFreq;
+    
+    // Maps each element to its current total frequency
+    std::unordered_map<int, int> freqMap;
+    
+    // Group elements by their frequency level using a 0-indexed vector of vectors (acting as stacks)
+    // index 'i' holds elements that have reached a frequency of 'i + 1'
+    std::vector<std::vector<int>> groupStacks;
+
+public:
+    FreqStack() {
+        maxFreq = 0;
+        // Optimization: Pre-reserve space to avoid dynamic allocation overhead
+        freqMap.reserve(20000); 
+        groupStacks.reserve(20000);
+    }
+    
+    void push(int val) {
+        // Increment and get the new frequency of the element
+        int currentFreq = ++freqMap[val];
+        
+        // Track the maximum frequency seen so far
+        if (currentFreq > maxFreq) {
+            maxFreq = currentFreq;
+        }
+        
+        // Ensure our vector has enough frequency level slots
+        if (groupStacks.size() < currentFreq) {
+            groupStacks.push_back({});
+        }
+        
+        // Push the element into its corresponding frequency layer
+        groupStacks[currentFreq - 1].push_back(val);
+    }
+    
+    int pop() {
+        // Get the most frequent element (the last element in the maxFreq stack breaks ties by recency)
+        int val = groupStacks[maxFreq - 1].back();
+        groupStacks[maxFreq - 1].pop_back();
+        
+        // Decrement its overall frequency in the tracking map
+        freqMap[val]--;
+        
+        // If the top frequency level stack becomes completely empty, reduce the max frequency pointer
+        if (groupStacks[maxFreq - 1].empty()) {
+            maxFreq--;
+        }
+        
+        return val;
+    }
+};
+
+// Fast I/O Optimization for LeetCode
+auto init = []() {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    return 0;
+}();
