@@ -1,0 +1,24 @@
+class Solution {
+public:
+    vector<pair<int, int>> pairs;
+    mt19937 rng{random_device{}()};
+
+    Solution(int n, vector<int>& blacklist) {
+        sort(blacklist.begin(), blacklist.end());
+
+        int l = -1;
+        for (int r : blacklist) {
+            if (l < r - 1) pairs.push_back({l + 1, r - 1});
+            l = r;
+        }
+
+        if (blacklist.empty() || blacklist.back() < n - 1)
+            pairs.push_back({l + 1, n - 1});
+    }
+
+    int pick() {
+        auto [l, r] = pairs[uniform_int_distribution<int>(0, pairs.size() - 1)(rng)];
+
+        return uniform_int_distribution<int>(l, r)(rng);
+    }
+};
