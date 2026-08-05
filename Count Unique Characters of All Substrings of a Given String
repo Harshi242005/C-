@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int uniqueLetterString(string s) {
+        int n = s.size();
+
+        unordered_map<char, vector<int>> mp;
+
+        for (int i = 0; i < n; ++i) {
+            mp[s[i]].push_back(i);
+        }
+
+        int ans = 0;
+
+        for (auto &it : mp) {
+            vector<int> &idx = it.second;
+            int m = idx.size();
+
+            for (int j = 0; j < m; ++j) {
+                int curr = idx[j];
+                int prev = (j == 0) ? -1 : idx[j - 1];
+                int next = (j == m - 1) ? n : idx[j + 1];
+
+                ans += 1 * (curr - prev) * (next - curr);
+            }
+        }
+
+        return ans;
+    }
+};
+
+// char at index i, contribute to the following no. of substr: (i + 1) × (n - i)
+
+// L: 0 E: 1,2,7 T:3 C:4 O:5 D:6
