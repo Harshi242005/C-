@@ -1,0 +1,70 @@
+class Solution {
+public:
+    vector<int> parent, rankv;
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]);
+        return parent[x];
+    }
+
+    void unite(int x, int y) {
+        int px = find(x);
+        int py = find(y);
+
+        if (px == py) return;
+
+        if (rankv[px] < rankv[py])
+            parent[px] = py;
+        else if (rankv[px] > rankv[py])
+            parent[py] = px;
+        else {
+            parent[py] = px;
+            rankv[px]++;
+        }
+    }
+
+    int largestComponentSize(vector<int>& nums) {
+        int n = nums.size();
+
+        parent.resize(n);
+        rankv.assign(n, 0);
+
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+
+        unordered_map<int, int> factorIndex;
+
+        for (int i = 0; i < n; i++) {
+            int x = nums[i];
+
+            for (int d = 2; d * d <= x; d++) {
+                if (x % d == 0) {
+                    if (factorIndex.count(d))
+                        unite(i, factorIndex[d]);
+                    else
+                        factorIndex[d] = i;
+
+                    while (x % d == 0)
+                        x /= d;
+                }
+            }
+
+            if (x > 1) {
+                if (factorIndex.count(x))
+                    unite(i, factorIndex[x]);
+                else
+                    factorIndex[x] = i;
+            }
+        }
+
+        unordered_map<int, int> cnt;
+        int ans = 0;
+
+        for (int i = 0; i < n; i++) {
+            ans = max(ans, ++cnt[find(i)]);
+        }
+
+        return ans;
+    }
+};
